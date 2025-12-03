@@ -123,9 +123,11 @@ We move beyond simple chatbots by using Llama as an **Edge Reasoning Engine**:
 
 ## 👥 The Team
 
-  * **Boitumelo * Lead Developer & AI Integration
-  * **[Teammate A]:** UI/UX Design & Frontend
-  * **[Teammate B]:** Backend & Database
+  * **Boitumelo Rachoshi** * Lead Developer & AI Integration
+  * **Tebatso Katane:** Backend & Database
+  * **Zinhle Hlongwane:** UI/UX Design & Frontend
+  * **Aphiwe Vuba :** Backend & AI
+  * **Liyabona Mendela:** Backend,AI & Database
 
 -----
 
