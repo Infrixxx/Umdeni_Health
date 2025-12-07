@@ -2,7 +2,7 @@ from fastapi import FastAPI, Depends, HTTPException
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 import uuid 
-from app_.user_db import init_db, get_session
+from app_.database import init_db, get_user_session
 from models.models import User, UserCreate, UserRead, UserLogin
 from app_.auth import hash_password, create_access_token, verify_password, get_current_user, get_core_session
 
@@ -14,11 +14,11 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 @app.get("/users", response_model=list[UserRead])
-async def list_users(session: AsyncSession = Depends(get_session)):
+async def list_users(session: AsyncSession = Depends(get_user_session)):
     users = await session.exec(select(User))
     return users.all()
 
-@app.post("/register")
+@app.post("/users/register")
 async def register_user(data: UserCreate, session: AsyncSession = Depends(get_core_session)):
     existing = await session.exec(select(User).where(User.email == data.email))
     if existing.first():
@@ -40,7 +40,7 @@ async def register_user(data: UserCreate, session: AsyncSession = Depends(get_co
     return {"message": "User created", "id": user.id}
 
 
-@app.post("/login")
+@app.post("/users/login")
 async def login_user(data: UserLogin, session: AsyncSession = Depends(get_core_session)):
     query = await session.exec(select(User).where(User.email == data.email))
     user = query.first()

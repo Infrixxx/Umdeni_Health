@@ -7,7 +7,7 @@ from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 import secrets
 from models.models import User
-from app_.user_db import get_session as get_core_session
+from app_.database import get_user_session as get_core_session
 
 SECRET_KEY = secrets.token_urlsafe(32)
 ALGORITHM = "HS256"
