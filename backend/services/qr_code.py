@@ -1,6 +1,6 @@
 import qrcode
 
-file_path = "/home/g33k/Pictures/qrcode.png"
+file_path = "qrcode.png"
 qr = qrcode.QRCode()
 qr.add_data("liyabona")
 
