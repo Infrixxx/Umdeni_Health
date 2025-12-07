@@ -3,7 +3,7 @@ from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 import uuid 
 from app_.user_db import init_db, get_session
-from models.models import User, UserCreate, UserRead, patientRecord, UserLogin
+from models.models import User, UserCreate, UserRead, UserLogin
 from app_.auth import hash_password, create_access_token, verify_password, get_current_user, get_core_session
 
 async def lifespan(app: FastAPI):
@@ -26,6 +26,7 @@ async def register_user(data: UserCreate, session: AsyncSession = Depends(get_co
 
     user = User(
         id = str(uuid.uuid4()),
+        name=data.name, 
         email=data.email,
         password=hash_password(data.password),
         role=data.role,
