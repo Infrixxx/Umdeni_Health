@@ -1,18 +1,34 @@
-from sqlalchemy import Column, String, Text
-from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import DeclarativeBase
-from fastapi_users.db import SQLAlchemyBaseUserTableUUID
-from uuid import uuid4
+from sqlmodel import SQLModel, Field
+import uuid
 
-class Base(DeclarativeBase):
-    pass
+class User(SQLModel, table=True):
+    id: str = Field(default=lambda: str(uuid.uuid4()), primary_key=True, index=True, nullable=False)
+    name: str
+    email: str = Field(index=True, unique=True)
+    password: str
+    role : str
+    is_superuser: bool = Field(default=False)
 
-class User(SQLAlchemyBaseUserTableUUID, Base):
-    __tablename__ = "users"
 
-    role = Column(String, default="patient", nullable=False)
-    medical_history = Column(Text, nullable=True)
-    prescriptions = Column(Text, nullable=True)
+class UserCreate(SQLModel):
+    name: str
+    email: str
+    password: str
+    role: str
 
-    if role == "patient":
-        patient_id = Column(UUID(as_uuid=True), default=uuid4, unique=True, index=True)
+class UserRead(SQLModel):
+    id: str
+    name: str
+    email: str
+    role: str
+    is_superuser: bool
+
+class UserLogin(SQLModel):
+    email: str
+    password: str
+
+class patientRecord(SQLModel, table=True):
+    id: str = Field(default=lambda: str(uuid.uuid4()), primary_key=True, index=True, nullable=False)
+    user_id: str = Field(foreign_key="user.id")
+    medical_history: str
+    medications: str
