@@ -23,6 +23,7 @@ class UserRead(SQLModel):
     email: str
     role: str
     is_superuser: bool
+    
 
 class UserLogin(SQLModel):
     email: str
