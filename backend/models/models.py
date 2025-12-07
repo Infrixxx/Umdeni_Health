@@ -1,4 +1,5 @@
 from sqlmodel import SQLModel, Field
+from typing import Optional
 import uuid
 
 class User(SQLModel, table=True):
@@ -28,7 +29,8 @@ class UserLogin(SQLModel):
     password: str
 
 class patientRecord(SQLModel, table=True):
-    id: str = Field(default=lambda: str(uuid.uuid4()), primary_key=True, index=True, nullable=False)
-    user_id: str = Field(foreign_key="user.id")
-    medical_history: str
-    medications: str
+    user_id: str = Field(default=lambda: str(uuid.uuid4()), primary_key=True, index=True, nullable=False)
+    medical_history: str = Field(default=" ")
+    medications: str = Field(default=" ")
+
+
