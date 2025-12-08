@@ -1,6 +1,6 @@
 from groq import Groq
 
-# client = Groq(api_key="groq ap key")
+# client = 
 
 def generate_response(prompt: str) -> str:
     response = client.chat.completions.create(
