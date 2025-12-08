@@ -1,11 +1,12 @@
 from fastapi import FastAPI, Depends, HTTPException
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
-import uuid 
+import uuid
 from typing import Optional
 from app_.database import init_db, get_user_session, get_patient_session
-from models.models import User, UserCreate, UserRead, UserLogin, patientRecord
+from models.models import User, UserCreate, UserRead, UserLogin, patientRecord, FamilyMember
 from app_.auth import hash_password, create_access_token, verify_password, get_current_user, get_core_session
+from services.llama_engine import generate_response
 
 async def lifespan(app: FastAPI):
     await init_db()
@@ -90,3 +91,41 @@ async def get_patient(user_id: uuid.UUID, session: AsyncSession = Depends(get_pa
 
 
     return patient
+
+@app.post("/family/add", response_model=dict)
+async def add_family_member(user_id: uuid.UUID, patient_id: uuid.UUID, relationship: str, session: AsyncSession = Depends(get_patient_session)):
+    family = FamilyMember(user_id=str(user_id), patient_id=str(patient_id), relationship=relationship)
+    session.add(family)
+    await session.commit()
+    await session.refresh(family)
+    return {"message": "Family member added", "family_id": str(family.patient_id)}
+
+@app.get("/family/{user_id}")
+async def get_family_members(user_id: str, session: AsyncSession = Depends(get_patient_session)):
+    query = select(FamilyMember).where(FamilyMember.user_id == user_id)
+    result = await session.exec(query)
+    return result.all()
+
+@app.get("/patient/{patient_id}/llama")
+async def llama_patient_summary(
+    patient_id: uuid.UUID,
+    session: AsyncSession = Depends(get_patient_session)
+):
+    
+    result = await session.exec(select(patientRecord).where(patientRecord.user_id == str(patient_id)))
+    patient = result.first()
+
+    if not patient:
+        raise HTTPException(status_code=404, detail="Patient not found")
+    
+    medication = patient.medications
+    medicalhistory = patient.medical_history
+
+    prompt = f"Give advice on how to take the {medication} as well as tips based on {medicalhistory}"
+
+    airesponse = generate_response(prompt)
+
+    return {
+        "patient_id": str(patient_id),
+        "response": airesponse
+        }

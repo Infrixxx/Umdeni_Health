@@ -23,7 +23,6 @@ class UserRead(SQLModel):
     email: str
     role: str
     is_superuser: bool
-    
 
 class UserLogin(SQLModel):
     email: str
@@ -33,5 +32,10 @@ class patientRecord(SQLModel, table=True):
     user_id: str = Field(default=lambda: str(uuid.uuid4()), primary_key=True, index=True, nullable=False)
     medical_history: str = Field(default=" ")
     medications: str = Field(default=" ")
+
+class FamilyMember(SQLModel, table=True):
+    user_id: str = Field(default=lambda: str(uuid.uuid4()), primary_key=True, index=True, nullable=False)
+    patient_id: str 
+    relationship: str
 
 

@@ -1,17 +1,18 @@
-import ollama
+from groq import Groq
+
+client = Groq(api_key="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")
 
 def generate_response(prompt: str) -> str:
-    response = ollama.chat(
-        model="llama3",
+    response = client.chat.completions.create(
+        model="llama-3.1-8b-instant",
         messages=[
-            {"role": "system", "content": "You are a helpful assistant for a medical app(Umndeni Health) and can translate between South African languages"},
+            {
+                "role": "system",
+                "content": "You are a helpful assistant for Umndeni Health and reduce anxiety of patients and give advice or health tips."
+            },
             {"role": "user", "content": prompt},
         ],
     )
-    return response['message']['content']
+    return response.choices[0].message.content
 
-if __name__ == "__main__":
-    while True:
-        user_input = input("You: ")
-        answer = generate_response(user_input)
-        print("Assistant:", answer)
+print(generate_response("whats your duty"))
